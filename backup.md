@@ -42,7 +42,10 @@ Public Sub ExportAllVbaComponents()
 
     Set vbProj = ThisWorkbook.VBProject
     
-    exportFolder = ThisWorkbook.Path & "\" & BACKUP_FOLDER_NAME
+
+    ' フォルダ選択ダイアログを表示してエクスポート先フォルダを指定
+    exportFolder = GetExportFolder()
+    If exportFolder = "" Then　Exit Sub
     If Dir(exportFolder, vbDirectory) = "" Then MkDir exportFolder
     
     For Each vbComp In vbProj.VBComponents
@@ -93,7 +96,11 @@ Public Sub ImportAllVbaComponents_Final()
     
     ' バックアップフォルダのパスをチェック
     Dim folderPath As String
-    folderPath = ThisWorkbook.Path & "\" & BACKUP_FOLDER_NAME
+    folderPath = GetExportFolder()
+    If folderPath = "" Then
+        GoTo CleanUp
+    End If
+
     If Not fso.FolderExists(folderPath) Then
         MsgBox "バックアップフォルダが見つかりません: " & folderPath, vbCritical
         GoTo CleanUp
@@ -157,6 +164,25 @@ ErrorHandler:
     GoTo CleanUp
 End Sub
 
+'================================================================================
+' 機能：エクスポート先フォルダをユーザーに選択させるダイアログを表示し、パスを返す
+' 戻り値：選択されたフォルダのパス（キャンセル時は空文字列）
+'================================================================================
+Private Function GetExportFolder() As String
+    Dim fd As Object
+    Set fd = Application.FileDialog(4) ' msoFileDialogFolderPicker = 4
+    With fd
+        .Title = "エクスポート先フォルダを選択してください"
+        .InitialFileName = ThisWorkbook.Path & "\" & BACKUP_FOLDER_NAME
+        If .Show = -1 Then
+            GetExportFolder = .SelectedItems(1)
+        Else
+            MsgBox "フォルダが選択されませんでした。処理を中止します。", vbExclamation
+            GetExportFolder = ""
+        End If
+    End With
+    Set fd = Nothing
+End Function
 
 '================================================================================
 ' 機能：指定された名前のVBAコンポーネントが存在するかどうかを安全に判定する
