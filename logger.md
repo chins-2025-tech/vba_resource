@@ -75,7 +75,7 @@ Private Sub Class_Initialize()
     If tempPath = "" Then tempPath = ThisWorkbook.Path ' TEMPが取得できない場合のフォールバック
     On Error GoTo 0
     
-    pLogFilePath = tempPath & "\EXCEL_VBA_" & Format(Now, "yyyymmdd_hhmmss") & ".log"
+    pLogFilePath = tempPath & "\EXCEL_VBA_" & Format(Now, "yyyymmdd") & ".log"
     
     pFileNum = 0
 End Sub

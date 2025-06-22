@@ -173,7 +173,9 @@ Private Function GetExportFolder() As String
     Set fd = Application.FileDialog(4) ' msoFileDialogFolderPicker = 4
     With fd
         .Title = "エクスポート先フォルダを選択してください"
-        .InitialFileName = ThisWorkbook.Path & "\" & BACKUP_FOLDER_NAME
+        .InitialFileName = ThisWorkbook.Path & "\" & BACKUP_FOLDER_NAME _
+                            & "_" & Left(ThisWorkbook.name, InStrRev(ThisWorkbook.name, ".") - 1) _
+                            & "_" & Format(Date, "yyyymmddhhnn")
         If .Show = -1 Then
             GetExportFolder = .SelectedItems(1)
         Else
